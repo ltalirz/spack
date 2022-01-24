@@ -2833,7 +2833,7 @@ spack:
     install_tree:
       root: /tmp/store
 """)
-    if os.name == 'nt':
+    if sys.platform == 'win32':
         sep = '\\'
     else:
         sep = '/'
