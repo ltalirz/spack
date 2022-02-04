@@ -21,6 +21,8 @@ from spack.version import ver
 
 _mock_transport_error = 'Mock HTTP transport error'
 
+pytestmark = pytest.mark.skipif(
+    not which('git'), reason='requires git to be installed')
 
 @pytest.fixture(params=[None, '1.8.5.2', '1.8.5.1',
                         '1.7.10', '1.7.1', '1.7.0'])

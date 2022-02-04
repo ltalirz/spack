@@ -900,11 +900,20 @@ class PackageBase(six.with_metaclass(PackageMeta, PackageViewMixin, object)):
 
     @property
     def platform_executables(self):
+        # Executables on Windows end in
+        # a .exe extension, need to capture
+        # for regex
+        def to_windows_exe(exe: str):
+            if exe.endswith('$'):
+                exe = exe.replace('$', '.exe$')
+            else:
+                exe += '.exe'
+            return exe
         plat_exe = []
         if hasattr(self, 'executables'):
             for exe in self.executables:
                 if sys.platform == 'win32':
-                    exe = exe.replace('$', r'\.exe$')
+                    exe = to_windows_exe(exe)
                 plat_exe.append(exe)
         return plat_exe
 

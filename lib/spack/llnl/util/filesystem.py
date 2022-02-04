@@ -1094,12 +1094,23 @@ def remove_linked_tree(path):
     Parameters:
         path (str): Directory to be removed
     """
+    # On windows, cleaning a Git stage can be an issue
+    # as git leaves readonly files that Python handles
+    # poorly on Windows. Remove readonly status and try again
+    def onerror(func, path, exe_info):
+        os.chmod(path, stat.S_IWUSR)
+        try:
+            func(path)
+        except Exception as e:
+            tty.warn(e)
+            pass
+
     if os.path.exists(path):
         if os.path.islink(path):
-            shutil.rmtree(os.path.realpath(path), True)
+            shutil.rmtree(os.path.realpath(path), onerror=onerror)
             os.unlink(path)
         else:
-            shutil.rmtree(path, True)
+            shutil.rmtree(path, onerror=onerror)
 
 
 @contextmanager

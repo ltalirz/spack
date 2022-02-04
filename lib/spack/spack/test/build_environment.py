@@ -24,6 +24,7 @@ from spack.build_environment import (
 from spack.paths import build_env_path
 from spack.util.environment import EnvironmentModifications
 from spack.util.executable import Executable
+from spack.util.path import convert_to_platform_path, platform_pathsep
 
 
 @pytest.fixture
@@ -139,8 +140,6 @@ def test_cc_not_changed_by_modules(monkeypatch, working_env):
     assert os.environ['ANOTHER_VAR'] == 'THIS_IS_SET'
 
 
-@pytest.mark.skipif(sys.platform == 'win32',
-                    reason="Not supported on Windows (yet)")
 @pytest.mark.parametrize('initial,modifications,expected', [
     # Set and unset variables
     ({'SOME_VAR_STR': '', 'SOME_VAR_NUM': '0'},
@@ -183,13 +182,13 @@ def test_compiler_config_modifications(
     # Monkeypatch a pkg.compiler.environment with the required modifications
     pkg = spack.spec.Spec('cmake').concretized().package
     monkeypatch.setattr(pkg.compiler, 'environment', modifications)
-
     # Trigger the modifications
     spack.build_environment.setup_package(pkg, False)
 
     # Check they were applied
     for name, value in expected.items():
         if value is not None:
+            value = platform_pathsep(value)
             assert os.environ[name] == value
             continue
         assert name not in os.environ

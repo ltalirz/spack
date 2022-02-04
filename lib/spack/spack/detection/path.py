@@ -42,12 +42,12 @@ def executables_in_path(path_hints=None):
         path_hints (list): list of paths to be searched. If None the list will be
             constructed based on the PATH environment variable.
     """
-    # build_environment.py::1013: If we're on a Windows box, run vswhere,
+    # If we're on a Windows box, run vswhere,
     # steal the installationPath using windows_os.py logic,
     # construct paths to CMake and Ninja, add to PATH
     path_hints = path_hints or spack.util.environment.get_path('PATH')
     if sys.platform == 'win32':
-        msvc_paths = winOs.WindowsOs.vs_install_paths
+        msvc_paths = list(winOs.WindowsOs.vs_install_paths)
         msvc_cmake_paths = [
             os.path.join(path, "Common7", "IDE", "CommonExtensions", "Microsoft",
                          "CMake", "CMake", "bin")

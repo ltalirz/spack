@@ -63,8 +63,6 @@ def test_parse_spec_flags_with_spaces(
     assert all(x in s.variants for x in expected_variants)
 
 
-@pytest.mark.skipif(sys.platform == 'win32',
-                    reason="Not supported on Windows (yet)")
 @pytest.mark.usefixtures('config')
 def test_match_spec_env(mock_packages, mutable_mock_env_path):
     """
@@ -87,8 +85,6 @@ def test_match_spec_env(mock_packages, mutable_mock_env_path):
         assert env_spec.concrete
 
 
-@pytest.mark.skipif(sys.platform == 'win32',
-                    reason="Not supported on Windows (yet)")
 @pytest.mark.usefixtures('config')
 def test_multiple_env_match_raises_error(mock_packages, mutable_mock_env_path):
     e = ev.create('test')
@@ -102,8 +98,6 @@ def test_multiple_env_match_raises_error(mock_packages, mutable_mock_env_path):
     assert 'matches multiple specs' in exc_info.value.message
 
 
-@pytest.mark.skipif(sys.platform == 'win32',
-                    reason="Not supported on Windows (yet)")
 @pytest.mark.usefixtures('config')
 def test_root_and_dep_match_returns_root(mock_packages, mutable_mock_env_path):
     e = ev.create('test')

@@ -91,9 +91,13 @@ class CmakeClient(CMakePackage):
         # check that cmake is in the global scope.
         global cmake
         check(cmake is not None, "No cmake was in environment!")
-
+        print(spec['cmake'].prefix)
+        print(type(spec['cmake']))
+        print('-----------------')
         # check that which('cmake') returns the right one.
         cmake = which('cmake')
+        print(cmake)
+        print(cmake.exe)
         check(cmake.exe[0].startswith(spec['cmake'].prefix.bin),
               "Wrong cmake was in environment: %s" % cmake)
 

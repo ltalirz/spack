@@ -16,7 +16,7 @@ import sys
 import six.moves.urllib.parse as urllib_parse
 from six import string_types
 
-import spack.util.path
+from spack.util.path import canonicalize_path, convert_to_posix_path
 
 
 def _split_all(path):
@@ -71,6 +71,7 @@ def parse(url, scheme='file'):
     allow_fragments=False.
     """
 
+    # require_url_format(url)
     url_obj = (
         urllib_parse.urlparse(url, scheme=scheme, allow_fragments=False)
         if isinstance(url, string_types) else url)
@@ -85,9 +86,6 @@ def parse(url, scheme='file'):
     #     C:\\a\\b\\c
     #     X:/a/b/c
     is_windows_path = (len(scheme) == 1 and 'a' <= scheme and scheme <= 'z')
-    if is_windows_path:
-        netloc = scheme.upper() + ':'
-        scheme = 'file'
 
     if scheme == 'file':
         # If the above windows path case did not hold, check the second case.
@@ -104,8 +102,8 @@ def parse(url, scheme='file'):
             if is_windows_path:
                 netloc = netloc[0].upper() + ':'
 
-        path = spack.util.path.canonicalize_path(netloc + path)
-        path = re.sub(r'\\', '/', path)
+        path = canonicalize_path(netloc + path)
+        path = convert_to_posix_path(path)
         path = re.sub(r'^/+', '/', path)
 
         if not is_windows_path:
@@ -123,7 +121,7 @@ def parse(url, scheme='file'):
             netloc, path = path[:2], path[2:]
 
     if sys.platform == "win32":
-        path = path.replace('\\', '/')
+        path = convert_to_posix_path(path)
 
     return urllib_parse.ParseResult(scheme=scheme,
                                     netloc=netloc,
@@ -199,9 +197,11 @@ def join(base_url, path, *extra, **kwargs):
       'file:///opt/spack'
     """
     paths = [
-        (x.replace('\\', '/') if isinstance(x, string_types)
-            else x.geturl().replace('\\', '/'))
+        (x) if isinstance(x, string_types)
+        else x.geturl()
         for x in itertools.chain((base_url, path), extra)]
+
+    paths = [convert_to_posix_path(x) for x in paths]
     n = len(paths)
     last_abs_component = None
     scheme = ''
@@ -296,7 +296,7 @@ def _join(base_url, path, *extra, **kwargs):
             base_path = posixpath.join('', *path_tokens)
 
     if sys.platform == "win32":
-        base_path = base_path.replace('\\', '/')
+        base_path = convert_to_posix_path(base_path)
 
     return format(urllib_parse.ParseResult(scheme=scheme,
                                            netloc=netloc,
@@ -357,3 +357,7 @@ def parse_git_url(url):
             raise ValueError("bad port in git url: %s" % url)
 
     return (scheme, user, hostname, port, path)
+
+def require_url_format(url):
+    ut = re.search(r'(file://|http://|https://|ftp://|s3://)', url)
+    assert ut is not None

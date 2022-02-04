@@ -11,9 +11,10 @@ import spack.installer as inst
 import spack.repo
 import spack.spec
 
-# Functionality supported on windows however tests are currently failing
-# due to compatibility issues, or due to dependent components currently
-# being unsupported on Windows
+# Spack features encapsulated by this test are
+# supported on Windows but are currently
+# non functional due to Windows
+# compatibility issues.
 pytestmark = pytest.mark.skipif(sys.platform == "win32",
                                 reason="does not run on windows")
 

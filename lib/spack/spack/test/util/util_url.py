@@ -13,6 +13,7 @@ import pytest
 
 import spack.paths
 import spack.util.url as url_util
+from spack.util.path import convert_to_posix_path
 
 
 def test_url_parse():
@@ -54,7 +55,7 @@ def test_url_parse():
         assert(parsed.netloc == '')
 
     if sys.platform == "win32":
-        spack_root = spack_root.replace('\\', '/')
+        spack_root = convert_to_posix_path(spack_root)
 
     assert(parsed.netloc + parsed.path == spack_root)
 
@@ -285,7 +286,7 @@ def test_url_join_absolute_paths():
     # ...to work out what resource it points to)
 
     if sys.platform == "win32":
-        cwd.replace('\\', '/')
+        convert_to_posix_path(cwd)
         cwd = '/' + cwd
 
     # So, even though parse() assumes "file://" URL, the scheme is still
