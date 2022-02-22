@@ -5,7 +5,6 @@
 import os
 import os.path
 import sys
-from platform import platform
 
 import pytest
 
@@ -29,23 +28,11 @@ def executables_found(monkeypatch):
 
 
 @pytest.fixture
-def platform_executables(monkeypatch):
-    @property
-    def _platform_executables(self):
-        def to_windows_exe(exe: str):
-            if exe.endswith('$'):
-                exe = exe.replace('$', '.bat$')
-            else:
-                exe += '.bat'
-            return exe
-        plat_exe = []
-        if hasattr(self, 'executables'):
-            for exe in self.executables:
-                if sys.platform == 'win32':
-                    exe = to_windows_exe(exe)
-                plat_exe.append(exe)
-        return plat_exe
-    monkeypatch.setattr(spack.package.PackageBase, 'platform_executables', _platform_executables)
+def _platform_executables(monkeypatch):
+    def _win_exe_ext():
+        return '.bat'
+
+    monkeypatch.setattr(spack.package, 'win_exe_ext', _win_exe_ext)
 
 
 def define_plat_exe(exe):
@@ -54,10 +41,12 @@ def define_plat_exe(exe):
     return exe
 
 
-def test_find_external_single_package(mock_executable, executables_found, platform_executables):
+def test_find_external_single_package(mock_executable, executables_found,
+                                      _platform_executables):
     pkgs_to_check = [spack.repo.get('cmake')]
     executables_found({
-        mock_executable("cmake", output='echo cmake version 1.foo'): define_plat_exe('cmake')
+        mock_executable("cmake", output='echo cmake version 1.foo'):
+            define_plat_exe('cmake')
     })
 
     pkg_to_entries = spack.detection.by_executable(pkgs_to_check)
@@ -68,7 +57,8 @@ def test_find_external_single_package(mock_executable, executables_found, platfo
     assert single_entry.spec == Spec('cmake@1.foo')
 
 
-def test_find_external_two_instances_same_package(mock_executable, executables_found, platform_executables):
+def test_find_external_two_instances_same_package(mock_executable, executables_found,
+                                                  _platform_executables):
     pkgs_to_check = [spack.repo.get('cmake')]
 
     # Each of these cmake instances is created in a different prefix
@@ -126,7 +116,8 @@ def test_get_executables(working_env, mock_executable):
 external = SpackCommand('external')
 
 
-def test_find_external_cmd(mutable_config, working_env, mock_executable, platform_executables):
+def test_find_external_cmd(mutable_config, working_env, mock_executable,
+                           _platform_executables):
     """Test invoking 'spack external find' with additional package arguments,
     which restricts the set of packages that Spack looks for.
     """
@@ -157,8 +148,9 @@ def test_find_external_cmd_not_buildable(
 
 
 def test_find_external_cmd_full_repo(
-        mutable_config, working_env, mock_executable, mutable_mock_repo, platform_executables):
-    """Test invoking 'spack external find --all' with no additional arguments
+        mutable_config, working_env, mock_executable, mutable_mock_repo,
+        _platform_executables):
+    """Test invoking 'spack external find' with no additional arguments, which
     iterates through each package in the repository.
     """
     exe_path1 = mock_executable(
@@ -217,7 +209,8 @@ def test_list_detectable_packages(mutable_config, mutable_mock_repo):
     assert external.returncode == 0
 
 
-def test_packages_yaml_format(mock_executable, mutable_config, monkeypatch, platform_executables):
+def test_packages_yaml_format(
+        mock_executable, mutable_config, monkeypatch, _platform_executables):
     # Prepare an environment to detect a fake gcc
     gcc_exe = mock_executable('gcc', output="echo 4.2.1")
     prefix = os.path.dirname(gcc_exe)
@@ -241,7 +234,8 @@ def test_packages_yaml_format(mock_executable, mutable_config, monkeypatch, plat
     assert extra_attributes['compilers']['c'] == gcc_exe
 
 
-def test_overriding_prefix(mock_executable, mutable_config, monkeypatch, platform_executables):
+def test_overriding_prefix(
+        mock_executable, mutable_config, monkeypatch, _platform_executables):
     # Prepare an environment to detect a fake gcc that
     # override its external prefix
     gcc_exe = mock_executable('gcc', output="echo 4.2.1")
@@ -271,7 +265,7 @@ def test_overriding_prefix(mock_executable, mutable_config, monkeypatch, platfor
 
 
 def test_new_entries_are_reported_correctly(
-        mock_executable, mutable_config, monkeypatch, platform_executables
+        mock_executable, mutable_config, monkeypatch, _platform_executables
 ):
     # Prepare an environment to detect a fake gcc
     gcc_exe = mock_executable('gcc', output="echo 4.2.1")

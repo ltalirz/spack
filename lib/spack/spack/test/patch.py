@@ -50,6 +50,7 @@ def mock_patch_stage(tmpdir_factory, monkeypatch):
 
 data_path = os.path.join(spack.paths.test_path, 'data', 'patch')
 
+
 @pytest.mark.parametrize('filename, sha256, archive_sha256', [
     # compressed patch -- needs sha256 and archive_256
     (os.path.join(data_path, 'foo.tgz'),
@@ -132,9 +133,10 @@ def test_patch_order(mock_packages, config):
     spec.concretize()
 
     mid2_sha256 = 'mid21234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234' \
-        if not is_windows else 'mid21234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234'
+        if not is_windows \
+        else 'mid21234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234'
     mid1_sha256 = '0b62284961dab49887e31319843431ee5b037382ac02c4fe436955abef11f094' \
-         if not is_windows else 'aeb16c4dec1087e39f2330542d59d9b456dd26d791338ae6d80b6ffd10c89dfa'
+        if not is_windows else 'aeb16c4dec1087e39f2330542d59d9b456dd26d791338ae6d80b6ffd10c89dfa'
     top_sha256 = 'f7de2947c64cb6435e15fb2bef359d1ed5f6356b2aebb7b20535e3772904e6db' \
         if not is_windows else 'ff34cb21271d16dbf928374f610bb5dd593d293d311036ddae86c4846ff79070'
 

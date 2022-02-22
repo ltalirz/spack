@@ -39,6 +39,15 @@ def _split_all(path):
     return result
 
 
+def filter_win_file(url):
+    is_windows_path = (len(url.netloc) == 2 and
+                        url.netloc[1] == ':' and
+                        'A' <= url.netloc[0] and
+                        url.netloc[0] <= 'Z')
+    if is_windows_path:
+        return ntpath.abspath(ntpath.join(url.netloc, '\\', url.path))
+
+
 def local_file_path(url):
     """Get a local file path from a url.
 
@@ -49,13 +58,8 @@ def local_file_path(url):
         url = parse(url)
 
     if url.scheme == 'file':
-        is_windows_path = (len(url.netloc) == 2 and
-                           url.netloc[1] == ':' and
-                           'A' <= url.netloc[0] and
-                           url.netloc[0] <= 'Z')
-        if is_windows_path:
-            return ntpath.abspath(ntpath.join(url.netloc, '\\', url.path))
-
+        if is_windows:
+            return filter_win_file(url)
         return url.path
 
     return None
@@ -71,7 +75,7 @@ def parse(url, scheme='file'):
     allow_fragments=False.
     """
 
-    # require_url_format(url)
+    require_url_format(url)
     url_obj = (
         urllib_parse.urlparse(url, scheme=scheme, allow_fragments=False)
         if isinstance(url, string_types) else url)

@@ -12,6 +12,9 @@ import llnl.util.tty as tty
 import spack.config
 import spack.util.path as sup
 
+# This module pertains to path string padding manipulation specifically
+# which is used for binary caching. This functionality is not supported
+# on Windows as of yet.
 pytestmark = pytest.mark.skipif(sys.platform == 'win32',
                                 reason="Tests fail on Windows")
 

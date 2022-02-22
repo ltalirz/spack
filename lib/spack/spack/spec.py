@@ -1118,7 +1118,7 @@ class Spec(object):
             spec_list = SpecParser(self).parse(spec_like)
             if len(spec_list) > 1:
                 raise ValueError("More than one spec in string: " + spec_like)
-            if len(spec_list) < 1:
+            if len(spec_list) < 1 or spec_list[0] is None:
                 raise ValueError("String contains no specs: " + spec_like)
 
         elif spec_like is not None:
@@ -4619,6 +4619,10 @@ class SpecLexer(spack.parse.Lexer):
     """Parses tokens that make up spack specs."""
 
     def __init__(self):
+        # posixpath on Windows here because this string will be fed through
+        # shlex
+        filename_reg = r'[/\w.-]*/[/\w/-]+\.(yaml|json)[^\b]*' if not is_windows\
+            else r'([A-Za-z]:)*?[/\w.-]*/[/\w/-]+\.(yaml|json)[^\b]*'
         super(SpecLexer, self).__init__([
             (r'\^', lambda scanner, val: self.token(DEP,   val)),
             (r'\@', lambda scanner, val: self.token(AT,    val)),
@@ -4632,10 +4636,7 @@ class SpecLexer(spack.parse.Lexer):
 
             # Filenames match before identifiers, so no initial filename
             # component is parsed as a spec (e.g., in subdir/spec.yaml/json)
-            # posixpath on Windows here because this string will be fed through
-            # shlex
-            (r'[/\w.-]*/[/\w/-]+\.(yaml|json)[^\b]*' if not is_windows\
-                else r'([A-Za-z]:)*?[/\w.-]*/[/\w/-]+\.(yaml|json)[^\b]*',
+            (filename_reg,
              lambda scanner, v: self.token(FILE, v)),
 
             # Hash match after filename. No valid filename can be a hash

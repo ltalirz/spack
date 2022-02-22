@@ -1248,9 +1248,6 @@ def find(root, files, recursive=True):
         return _find_non_recursive(root, files)
 
 
-# here and in _find_non_recursive below we only take the first
-# index to check for system path safety as glob handles this
-# w.r.t. search_files
 @system_path_filter
 def _find_recursive(root, search_files):
 

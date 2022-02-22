@@ -68,6 +68,10 @@ def is_path_url(path):
     return bool(url_tuple.scheme) and len(url_tuple.scheme) > 1
 
 
+def win_exe_ext():
+    return '.exe'
+
+
 def path_to_os_path(*pths):
     """
     Takes an arbitrary number of positional parameters
@@ -78,7 +82,7 @@ def path_to_os_path(*pths):
     for pth in pths:
         if type(pth) is str and\
                 not is_path_url(pth):
-            pth = format_os_path(pth, mode=Path.platform_path)
+            pth = convert_to_platform_path(pth)
         ret_pths.append(pth)
     return ret_pths
 
@@ -158,8 +162,9 @@ def format_os_path(path, mode=Path.unix):
             or expose the replace method.
         mode (Path): the path filesperator style to normalize the
             passed path to. Default is unix style, i.e. '/'
-
     """
+    if not path:
+        return path
     if mode == Path.windows:
         path = path.replace('/', '\\')
     else:
@@ -177,14 +182,6 @@ def convert_to_windows_path(path):
 
 def convert_to_platform_path(path):
     return format_os_path(path, mode=Path.platform_path)
-
-
-def platform_pathsep(path):
-    if Path.platform_path == Path.windows:
-        path = path.replace(':', ';')
-    else:
-        path = path.replace(';', ':')
-    return path
 
 
 def substitute_config_variables(path):

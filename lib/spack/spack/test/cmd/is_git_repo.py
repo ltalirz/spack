@@ -45,6 +45,8 @@ def git_tmp_worktree(tmpdir):
     """Create new worktree in a temporary folder and monkeypatch
     spack.paths.prefix to point to it.
     """
+    # TODO: This is fragile and should be high priority for
+    # follow up fixes
     if sys.platform == 'win32':
         long_pth = str(tmpdir).split(os.path.sep)
         tmp_worktree = os.path.sep.join(long_pth[:-1])

@@ -334,13 +334,11 @@ class MockEnv(object):
         self.path = path
 
 
-@pytest.mark.skipif(sys.platform == 'win32',
-                    reason="Not supported on Windows (yet)")
 def test_substitute_config_variables(mock_low_high_config, monkeypatch):
-    prefix = spack.paths.prefix.lstrip('/')
+    prefix = spack.paths.prefix.lstrip('/').lstrip('C:\\')
 
     assert os.path.join(
-        '/foo/bar/baz', prefix
+        os.sep + os.path.join('foo','bar','baz'), prefix
     ) == spack_path.canonicalize_path('/foo/bar/baz/$spack')
 
     assert os.path.join(

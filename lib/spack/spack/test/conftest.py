@@ -297,6 +297,7 @@ def reset_compiler_cache():
     yield
     spack.compilers._compiler_cache = {}
 
+
 def onerror(func, path, error_info):
     # Windows readonly paths are not handled well by
     # Python, and can be a component of a
@@ -304,6 +305,7 @@ def onerror(func, path, error_info):
     # if it was an access error
     os.chmod(path, stat.S_IWUSR)
     func(path)
+
 
 @pytest.fixture(scope='function', autouse=True)
 def mock_stage(tmpdir_factory, monkeypatch, request):
@@ -1548,10 +1550,11 @@ def mock_executable(tmpdir):
     """
     import jinja2
     shebang = '#!/bin/bash\n' if not is_windows else '@ECHO OFF'
+
     def _factory(name, output, subdir=('bin',)):
         f = tmpdir.ensure(*subdir, dir=True).join(name)
         if is_windows:
-            f+='.bat'
+            f += '.bat'
         t = jinja2.Template('{{ shebang }}{{ output }}\n')
         f.write(t.render(shebang=shebang, output=output))
         f.chmod(0o755)

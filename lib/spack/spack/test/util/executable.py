@@ -45,7 +45,10 @@ print(u'\\xc3')
 
 
 def test_which_relative_path_with_slash(tmpdir, working_env):
-    tmpdir.ensure("exe")
+    if sys.platform == 'win32':
+        tmpdir.ensure("exe.exe")
+    else:
+        tmpdir.ensure("exe")
     path = str(tmpdir.join("exe"))
 
     os.environ['PATH'] = ''
@@ -55,7 +58,6 @@ def test_which_relative_path_with_slash(tmpdir, working_env):
         assert no_exe is None
         if sys.platform == "win32":
             # For Windows, need to create files with .exe after any assert is none tests
-            tmpdir.ensure("exe.exe")
             path += ".exe"
         else:
             fs.set_executable(path)

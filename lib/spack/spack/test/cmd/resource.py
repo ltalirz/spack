@@ -5,8 +5,6 @@
 import os
 import sys
 
-import pytest
-
 from spack.main import SpackCommand
 
 is_windows = sys.platform == 'win32'
@@ -48,7 +46,8 @@ def test_resource_list(mock_packages, capfd):
     assert 'patched by:' in out
     assert 'path:' in out
 
-    assert os.path.join('repos', 'builtin.mock', 'packages', 'patch-a-dependency', 'libelf.patch') in out
+    assert os.path.join('repos', 'builtin.mock', 'packages',
+                        'patch-a-dependency', 'libelf.patch') in out
     assert 'applies to: builtin.mock.libelf' in out
     assert 'patched by: builtin.mock.patch-a-dependency' in out
 
@@ -63,12 +62,19 @@ def test_resource_list_only_hashes(mock_packages, capfd):
 
 def test_resource_show(mock_packages, capfd):
     test_hash = 'c45c1564f70def3fc1a6e22139f62cb21cd190cc3a7dbe6f4120fa59ce33dcb8' \
-        if not is_windows else '3c5b65abcd6a3b2c714dbf7c31ff65fe3748a1adc371f030c283007ca5534f11'
+        if not is_windows \
+        else '3c5b65abcd6a3b2c714dbf7c31ff65fe3748a1adc371f030c283007ca5534f11'
     with capfd.disabled():
         out = resource('show', test_hash)
 
-    assert out.startswith('3c5b65abcd6a3b2c714dbf7c31ff65fe3748a1adc371f030c283007ca5534f11')
-    assert os.path.join('repos', 'builtin.mock', 'packages', 'patch-a-dependency', 'libelf.patch') in out
+    assert out.startswith('3c5b65abcd6a3b2c714dbf7\
+        c31ff65fe3748a1adc371f030c283007ca5534f11')
+    assert os.path.join(
+        'repos',
+        'builtin.mock',
+        'packages',
+        'patch-a-dependency',
+        'libelf.patch') in out
     assert 'applies to: builtin.mock.libelf' in out
     assert 'patched by: builtin.mock.patch-a-dependency' in out
 

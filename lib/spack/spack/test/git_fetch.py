@@ -24,6 +24,7 @@ _mock_transport_error = 'Mock HTTP transport error'
 pytestmark = pytest.mark.skipif(
     not which('git'), reason='requires git to be installed')
 
+
 @pytest.fixture(params=[None, '1.8.5.2', '1.8.5.1',
                         '1.7.10', '1.7.1', '1.7.0'])
 def git_version(request, monkeypatch):
@@ -73,7 +74,6 @@ def mock_bad_git(monkeypatch):
 def test_bad_git(tmpdir, mock_bad_git):
     """Trigger a SpackError when attempt a fetch with a bad git."""
     testpath = str(tmpdir)
-    print(spack.config.get('config:locks'))
 
     with pytest.raises(spack.error.SpackError):
         fetcher = GitFetchStrategy(git='file:///not-a-real-git-repo')

@@ -14,7 +14,7 @@ import llnl.util.filesystem as fs
 from spack.util.file_permissions import InvalidPermissionsError, set_permissions
 
 pytestmark = pytest.mark.skipif(sys.platform == 'win32',
-    reason="chmod unsupported on Windows")
+                                reason="chmod unsupported on Windows")
 
 
 def test_chmod_real_entries_ignores_suid_sgid(tmpdir):

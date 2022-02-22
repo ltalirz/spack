@@ -91,8 +91,9 @@ def by_executable(packages_to_check, path_hints=None):
     path_hints = [] if path_hints is None else path_hints
     exe_pattern_to_pkgs = collections.defaultdict(list)
     for pkg in packages_to_check:
-        for exe in pkg.platform_executables:
-            exe_pattern_to_pkgs[exe].append(pkg)
+        if hasattr(pkg, 'executables'):
+            for exe in pkg.platform_executables:
+                exe_pattern_to_pkgs[exe].append(pkg)
         # Add Windows specific, package related paths to the search paths
         path_hints.extend(compute_windows_program_path_for_package(pkg))
 

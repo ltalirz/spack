@@ -29,6 +29,7 @@ def test_is_system_path():
     assert(not envutil.is_system_path(''))
     assert(not envutil.is_system_path(None))
 
+
 if is_windows:
     test_paths = [
         'C:\\Users',
@@ -39,11 +40,11 @@ if is_windows:
         'C:\\nonsense_path\\extra\\bin']
 else:
     test_paths = ['/usr/bin',
-                '/nonsense_path/lib',
-                '/usr/local/lib',
-                '/bin',
-                '/nonsense_path/extra/bin',
-                '/usr/lib64']
+                  '/nonsense_path/lib',
+                  '/usr/local/lib',
+                  '/bin',
+                  '/nonsense_path/extra/bin',
+                  '/usr/lib64']
 
 
 def test_filter_system_paths():
@@ -68,7 +69,7 @@ def test_prune_duplicate_paths():
 
 
 def test_get_path(prepare_environment_for_tests):
-    os.environ['TEST_ENV_VAR'] = os.pathsep.join(['/a','/b','/c/d'])
+    os.environ['TEST_ENV_VAR'] = os.pathsep.join(['/a', '/b', '/c/d'])
     expected = ['/a', '/b', '/c/d']
     assert(envutil.get_path('TEST_ENV_VAR') == expected)
 

@@ -43,6 +43,7 @@ from spack.spec import Spec
 pytestmark = pytest.mark.skipif(sys.platform == "win32",
                                 reason="does not run on windows")
 
+
 def fake_fetchify(url, pkg):
     """Fake the URL for a package so it downloads from a file."""
     fetcher = FetchStrategyComposite()
