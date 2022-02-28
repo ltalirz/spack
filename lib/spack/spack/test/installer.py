@@ -830,7 +830,11 @@ def test_setup_install_dir_grp(install_mockery, monkeypatch, capfd):
     spec = installer.build_requests[0].pkg.spec
 
     fs.touchp(spec.prefix)
-    metadatadir = spack.store.layout.metadata_path(spec) if not is_windows else ''
+    metadatadir = spack.store.layout.metadata_path(spec)
+    # Regex matching with Windows style paths typically fails
+    # so we skip the match check here
+    if is_windows:
+        metadatadir = None
     # Should fail with a "not a directory" error
     with pytest.raises(OSError, match=metadatadir):
         installer._setup_install_dir(spec.package)

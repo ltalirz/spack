@@ -10,9 +10,11 @@ throughout Spack and should bring in a minimal number of external
 dependencies.
 """
 import os
+import sys
 
 import llnl.util.filesystem
 
+is_windows = sys.platform == 'win32'
 #: This file lives in $prefix/lib/spack/spack/__file__
 prefix = llnl.util.filesystem.ancestor(__file__, 4)
 
@@ -81,7 +83,8 @@ gpg_path           = os.path.join(opt_path, "spack", "gpg")
 # setting `SPACK_USER_CACHE_PATH`. Otherwise it defaults to ~/.spack.
 #
 def _get_user_cache_path():
-    return os.path.expanduser(os.getenv('SPACK_USER_CACHE_PATH') or "~/.spack")
+    return os.path.expanduser(os.getenv('SPACK_USER_CACHE_PATH')
+                              or "~%s.spack" % os.sep)
 
 
 user_cache_path = _get_user_cache_path()
@@ -116,12 +119,14 @@ default_misc_cache_path = os.path.join(user_cache_path, 'cache')
 
 # User configuration and caches in $HOME/.spack
 def _get_user_config_path():
-    return os.path.expanduser(os.getenv('SPACK_USER_CONFIG_PATH') or "~/.spack")
+    return os.path.expanduser(os.getenv('SPACK_USER_CONFIG_PATH') or
+                              "~%s.spack" % os.sep)
 
 
 # Configuration in /etc/spack on the system
 def _get_system_config_path():
-    return os.path.expanduser(os.getenv('SPACK_SYSTEM_CONFIG_PATH') or "/etc/spack")
+    return os.path.expanduser(os.getenv('SPACK_SYSTEM_CONFIG_PATH') or
+                              os.sep + os.path.join('etc', 'spack'))
 
 
 #: User configuration location

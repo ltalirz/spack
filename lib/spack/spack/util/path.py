@@ -93,7 +93,7 @@ def system_path_filter(_func=None, arg_slice=None):
     Optional slicing range can be specified to select specific arguments
 
     This decorator takes all (or a slice) of a method's positional arguments
-    and normalizes useage of filepath separators on a per platform basis.
+    and normalizes usage of filepath separators on a per platform basis.
 
     Note: **kwargs, urls, and any type that is not a string are ignored
     so in such cases where path normalization is required, that should be
@@ -125,15 +125,18 @@ def system_path_filter(_func=None, arg_slice=None):
 def get_system_path_max():
     # Choose a conservative default
     sys_max_path_length = 256
-    try:
-        path_max_proc  = subprocess.Popen(['getconf', 'PATH_MAX', '/'],
-                                          stdout=subprocess.PIPE,
-                                          stderr=subprocess.STDOUT)
-        proc_output = str(path_max_proc.communicate()[0].decode())
-        sys_max_path_length = int(proc_output)
-    except (ValueError, subprocess.CalledProcessError, OSError):
-        tty.msg('Unable to find system max path length, using: {0}'.format(
-            sys_max_path_length))
+    if is_windows:
+        sys_max_path_length = 260
+    else:
+        try:
+            path_max_proc  = subprocess.Popen(['getconf', 'PATH_MAX', '/'],
+                                              stdout=subprocess.PIPE,
+                                              stderr=subprocess.STDOUT)
+            proc_output = str(path_max_proc.communicate()[0].decode())
+            sys_max_path_length = int(proc_output)
+        except (ValueError, subprocess.CalledProcessError, OSError):
+            tty.msg('Unable to find system max path length, using: {0}'.format(
+                sys_max_path_length))
 
     return sys_max_path_length
 
@@ -155,7 +158,9 @@ class Path:
 def format_os_path(path, mode=Path.unix):
     """
     Format path to use consistent, platform specific
-    separators.
+    separators. Absolute paths are converted between
+    drive letters and a prepended '/' as per platform
+    requirement.
 
     Parameters:
         path (str): the path to be normalized, must be a string

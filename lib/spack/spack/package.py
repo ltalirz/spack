@@ -189,7 +189,7 @@ class DetectablePackageMeta(object):
                 # Executables on Windows end in
                 # a .exe extension, need to capture
                 # for regex
-                def to_windows_exe(exe: str):
+                def to_windows_exe(exe):
                     if exe.endswith('$'):
                         exe = exe.replace('$', '%s$' % win_exe_ext())
                     else:

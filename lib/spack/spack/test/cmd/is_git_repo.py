@@ -46,7 +46,9 @@ def git_tmp_worktree(tmpdir):
     spack.paths.prefix to point to it.
     """
     # TODO: This is fragile and should be high priority for
-    # follow up fixes
+    # follow up fixes. 27021
+    # Path length is occasionally too long on Windows
+    # the following reduces the path length to acceptable levels
     if sys.platform == 'win32':
         long_pth = str(tmpdir).split(os.path.sep)
         tmp_worktree = os.path.sep.join(long_pth[:-1])
