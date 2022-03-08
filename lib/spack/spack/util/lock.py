@@ -47,7 +47,7 @@ class Lock(llnl.util.lock.Lock):  # type: ignore[no-redef]
 
     def cleanup(self, *args):
         if self._enable:
-            super(Lock, self)._cleanup(*args)
+            super(Lock, self).cleanup(*args)
 
 
 def check_lock_safety(path):
