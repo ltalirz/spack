@@ -40,6 +40,8 @@ def test_url_parse():
     expected = convert_to_posix_path(
         os.path.abspath(
             posixpath.join('path', 'to', 'resource')))
+    if is_windows:
+        expected = expected.lstrip('C:')
     assert(parsed.path == expected)
 
     if is_windows:
@@ -60,7 +62,7 @@ def test_url_parse():
     assert(parsed.scheme == 'file')
 
     if is_windows:
-        spack_root = parsed.netloc + convert_to_posix_path(spack_root)
+        spack_root = '/' + convert_to_posix_path(spack_root)
 
     assert(parsed.netloc + parsed.path == spack_root)
 

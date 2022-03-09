@@ -18,6 +18,13 @@ pytestmark = pytest.mark.skipif(sys.platform == "win32",
                                 reason="does not run on windows")
 
 
+@pytest.fixture(autouse=True)
+def url_check(monkeypatch):
+    def _validate_url(url):
+        return
+    monkeypatch.setattr(spack.util.url, 'require_url_format', _validate_url)
+
+
 def test_build_tarball_overwrite(
         install_mockery, mock_fetch, monkeypatch, tmpdir):
 
