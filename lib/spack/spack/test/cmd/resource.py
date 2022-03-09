@@ -67,8 +67,7 @@ def test_resource_show(mock_packages, capfd):
     with capfd.disabled():
         out = resource('show', test_hash)
 
-    assert out.startswith('3c5b65abcd6a3b2c714dbf7\
-c31ff65fe3748a1adc371f030c283007ca5534f11')
+    assert out.startswith(test_hash)
     assert os.path.join(
         'repos',
         'builtin.mock',

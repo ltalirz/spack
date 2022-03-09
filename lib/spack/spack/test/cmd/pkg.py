@@ -171,13 +171,13 @@ def test_pkg_diff(mock_pkg_git_repo, mock_pkg_names):
 @pytest.mark.skipif(sys.platform == 'win32', reason="stdout format conflict")
 def test_pkg_added(mock_pkg_git_repo):
     out = split(pkg('added', 'HEAD^^', 'HEAD^'))
-    assert ['pkg-a', 'pkg-b', 'pkg-c'] in out
+    assert ['pkg-a', 'pkg-b', 'pkg-c'] == out
 
     out = split(pkg('added', 'HEAD^^', 'HEAD'))
-    assert ['pkg-a', 'pkg-b', 'pkg-d'] in out
+    assert ['pkg-a', 'pkg-b', 'pkg-d'] == out
 
     out = split(pkg('added', 'HEAD^', 'HEAD'))
-    assert ['pkg-d'] in out
+    assert ['pkg-d'] == out
 
     out = split(pkg('added', 'HEAD', 'HEAD'))
     assert out == []

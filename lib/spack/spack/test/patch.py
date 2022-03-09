@@ -51,6 +51,8 @@ def mock_patch_stage(tmpdir_factory, monkeypatch):
 data_path = os.path.join(spack.paths.test_path, 'data', 'patch')
 
 
+@pytest.mark.skipif(sys.platform == 'win32',
+                    reason="Line ending conflict on Windows")
 @pytest.mark.parametrize('filename, sha256, archive_sha256', [
     # compressed patch -- needs sha256 and archive_256
     (os.path.join(data_path, 'foo.tgz'),
