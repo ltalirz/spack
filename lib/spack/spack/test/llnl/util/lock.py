@@ -689,13 +689,11 @@ def test_upgrade_read_to_write_fails_with_readonly_file(private_lock_path):
         lock = lk.Lock(private_lock_path)
         assert lock._reads == 0
         assert lock._writes == 0
-        assert lock._current_lock is None
 
         lock.acquire_read()
         assert lock._reads == 1
         assert lock._writes == 0
         assert lock._file.mode == 'r'
-        assert lock._current_lock == lock.LOCK_SH
 
         # upgrade to write here
         with pytest.raises(lk.LockROFileError):

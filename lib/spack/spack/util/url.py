@@ -72,8 +72,9 @@ def parse(url, scheme='file'):
     """
     # guarantee a value passed in is of proper url format. Guarantee
     # allows for easier string manipulation accross platforms
-    require_url_format(url)
-    url = escape_file_url(url)
+    if isinstance(url, string_types):
+        require_url_format(url)
+        url = escape_file_url(url)
     url_obj = (
         urllib_parse.urlparse(url, scheme=scheme, allow_fragments=False)
         if isinstance(url, string_types) else url)
